@@ -126,6 +126,7 @@ class Starter extends React.Component {
       wintext='';
     return (
       <div>
+	<h1>Server state</h1>
         <link href='App.css'></link>
         <div className='winning'>{wintext}</div>
         <div className='row'>

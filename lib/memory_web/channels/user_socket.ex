@@ -2,7 +2,7 @@ defmodule MemoryWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", MemoryWeb.RoomChannel
+  channel "room:*", MemoryWeb.RoomChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -18,7 +18,7 @@ defmodule MemoryWeb.UserSocket do
   def connect(%{"token" => token}, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user socket", token, max_age: 1209600) do
       {:ok, user_id} ->
-	{:ok, assign(socket, user, user_id)}
+	{:ok, assign(socket, :user, user_id)}
       {:error, reason} ->
 	:error
     end
