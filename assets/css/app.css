@@ -1,0 +1,46 @@
+/* This file is for your main application css. */
+
+/*@import "~milligram/dist/milligram"; */
+
+.column > p {
+    padding-top: 10ex;
+    text-align: center;
+}
+
+.Hidden {
+  float: left;
+  width: 4rem;
+  height: 4rem;
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px black;
+  text-align: center;
+  background-color: gray;
+}
+.Revail {
+  float: left;
+  width: 4rem;
+  height: 4rem;
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px black;
+  text-align: center;
+  background-color: yellow;
+}
+.Matched {
+  float: left;
+  width: 4rem;
+  height: 4rem;
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px black;
+  text-align: center;
+  background-color: green;
+}
+.row{
+  clear: both;
+}
+
+.winning{
+  font-size: 10rem;
+}
