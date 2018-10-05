@@ -1,8 +1,9 @@
 <div class="row">
   <div class="column">
     <h1>Join a Game</h1>
-    <p><input type="text" id="game-input"></p>
-    <p><button id="game-button">Join</button></p>
-    <p id="game-output"></p>
+    <%= form_for @conn, "/game", fn f -> %>
+    <p>Enter you name: <%= text_input f, :name %> </p>
+    <p><%= submit "Join" %></p>
+    <% end %>
   </div>
 </div>

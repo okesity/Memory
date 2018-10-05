@@ -4,8 +4,8 @@ import _ from 'lodash';
 import '../css/app.css';
 
 
-export default function game_init(root) {
-  console.log('gameinit started');
+export default function game_init(root, channel) {
+  console.log('gameinit started', channel);
   ReactDOM.render(<Starter />, root);
 }
 
