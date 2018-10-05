@@ -6,12 +6,14 @@ import '../css/app.css';
 
 export default function game_init(root, channel) {
   console.log('gameinit started', channel);
-  ReactDOM.render(<Starter />, root);
+  ReactDOM.render(<Starter channel={channel} />, root);
 }
 
 class Starter extends React.Component {
   constructor(props){
     super(props);
+
+    this.channel = props.channel;
     this.checkCard=this.checkCard.bind(this);
     this.initTile=this.initTile.bind(this);
     this.reset=this.reset.bind(this);
@@ -23,6 +25,20 @@ class Starter extends React.Component {
       numMatch:0,
       numClick:0
     };
+
+    this.channel.join()
+	  .receive("ok", this.gotView.bind(this))
+	  .receive("error", resp => {console.log("Unable to join", resp)});
+  }
+  
+  gotView(view) {
+	  console.log("new view:", view);
+	  this.setState(view.game);
+  }
+
+  sendClick(id) {
+	  this.channel.push("click", {id: id})
+	  	      .receive("ok", this.gotView.bind(this));
   }
 
   checkCard(id){
