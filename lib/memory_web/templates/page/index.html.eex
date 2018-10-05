@@ -1,9 +1,14 @@
+<script>
+  function getDir() {
+    var input = document.getElementById("input").value;
+    window.location.href='/game/' + input
+  }
+</script>
+
 <div class="row">
   <div class="column">
     <h1>Join a Game</h1>
-    <%= form_for @conn, "/game", fn f -> %>
-    <p>Enter you name: <%= text_input f, :name %> </p>
-    <p><%= submit "Join" %></p>
-    <% end %>
+    <input id="input" type="text" name="game"/>
+    <button onClick="getDir()">Join</button>
   </div>
 </div>

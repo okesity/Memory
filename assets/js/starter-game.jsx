@@ -10,40 +10,38 @@ export default function game_init(root, channel) {
 }
 
 class Starter extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
 
     this.channel = props.channel;
-    this.checkCard=this.checkCard.bind(this);
-    this.initTile=this.initTile.bind(this);
-    this.reset=this.reset.bind(this);
     this.state = {
       firstValue:null,
       firstID:null,
       lock:false,
-      array:this.initTile(),   //contain condition of tiles
+      array:[],   //contain condition of tiles
       numMatch:0,
       numClick:0
     };
 
     this.channel.join()
-	  .receive("ok", this.gotView.bind(this))
-	  .receive("error", resp => {console.log("Unable to join", resp)});
+        .receive("ok", this.gotView.bind(this))
+        .receive("error", resp => {console.log("Unable to join", resp)});
   }
-  
+
   gotView(view) {
-	  console.log("new view:", view);
-	  this.setState(view.game);
+    console.log("got view", view.game);
+    for(let i=0;i<view.game.array.length;i++){
+      view.game.array[i].value = String.fromCharCode(view.game.array[i].value);
+    }
+    this.setState(view.game);
   }
-
-  sendClick(id) {
-	  this.channel.push("click", {id: id})
-	  	      .receive("ok", this.gotView.bind(this));
-  }
-
   checkCard(id){
+    /*console.log("check card", id);
+    this.channel.push("click", {id: id})
+	        .receive("ok", this.gotView.bind(this))
+    */
     let value=this.state.array[id].value;
-    console.log(value, id);
+    console.log("check card", value, id);
 
     if(this.state.lock)             //do nothing when locked
       return;
@@ -88,50 +86,28 @@ class Starter extends React.Component {
       console.log("add first value");
       this.setState({firstValue:value, firstID:id, lock:false});
     }
-  }
-
-  initTile(){   //initial l with {id:1, value:'A', isHidden:true, hasMatched:false}
-    let l=[];
-    for(let i='A'.charCodeAt();i<='H'.charCodeAt();i++){
-      l.push({
-        value: String.fromCharCode(i),
-        isHidden: true,
-        hasMatched:false
-      });
-      l.push({
-        value: String.fromCharCode(i),
-        isHidden: true,
-        hasMatched:false
-      });
-    }
-    l=_.shuffle(l);       //randomize l
-    console.log('initial ',l[0].isHidden);
-    return l;
+    
   }
 
   renderTile(i){
+    console.log("trying to render tile");
+    if (this.state.array.length ==0)
+	  return;
+    else
     return (
       <Tile id={i}
             value={this.state.array[i].value}
             isHidden={this.state.array[i].isHidden}
             hasMatched={this.state.array[i].hasMatched}
-            clickFunc={this.checkCard} />
+            clickFunc={this.checkCard.bind(this)} />
     );
   }
 
   reset(){
-    this.setState({
-      firstValue:null,
-      firstID:null,
-      lock:true,
-      array:this.initTile(),   //contain condition of tiles
-      numMatch:0,
-      numClick:0
-    });
-    setTimeout(() => {
-        this.setState({lock:false})
-      }, 100);
+    this.channel.push("reset", {})
+	  .receive("ok", this.gotView.bind(this));
   }
+	
 
 
   render() {
@@ -170,7 +146,7 @@ class Starter extends React.Component {
           {this.renderTile(0)}
         </div>
         <div className='row'>Number of clicks so far: {this.state.numClick}</div>
-        <button className='row' onClick={this.reset}>Reset</button>
+        <button className='row' onClick={this.reset.bind(this)}>Reset</button>
       </div>
     );
   }

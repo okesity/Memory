@@ -1,11 +1,11 @@
 <script>
-window.gameName = "<%= @name %>";
+window.gameName = "<%= @game %>";
 </script>
 <div class="row">
   <div class="column">
     <p><%= link "← go back", to: "/" %></p>
     <h2>Memory Game</h2>
-    <h3>Current Player:  <%= @name %></h3>
+    <h3>Current Player:  <%= @game %></h3>
     <div id="root">
       React component loading...
     </div>

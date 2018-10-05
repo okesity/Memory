@@ -1,8 +1,9 @@
 defmodule MemoryWeb.GamesChannel do
   use MemoryWeb, :channel
-  alias Memory.Game
+  alias Memory.Game, as: Game
+  alias Memory.BackupAgent, as: BackupAgent
  
-  def join("room:" <> name, payload, socket) do
+  def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       game = BackupAgent.get(name) || Game.new()
       socket = socket
@@ -15,10 +16,24 @@ defmodule MemoryWeb.GamesChannel do
     end 
   end
 
+
+  def handle_in("restart", %{}, socket) do
+    game = Game.restart(socket.assigns[:game])
+    socket = assign(socket, :game, game)
+    BackupAgent.put(socket.assigns[:name], game)
+    {:reply, {:ok, %{ "game" => Game.client_view(game)}}, socket}
+  end
+
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+
+  def handle_in("reset", payload, socket) do
+    name = socket.assigns[:name]
+    game = Game.new()
+    socket = assign(socket, :game, game)
+    BackupAgent.put(name, game)
+    {:reply, {:ok,%{"game" => Game.client_view(game)}}, socket}
+
   end
 
   def handle_in("click", %{"id" => id}, socket) do
@@ -28,10 +43,6 @@ defmodule MemoryWeb.GamesChannel do
     BackupAgent.put(name, game)
     {:reply,{:ok, %{"game" => Game.client_view(game)}}, socket}
   end
-
-  def handle_in("Name", payload, socket) do
-    {:reply, {:received, %{"Name"=> payload["Name"]<>"happy"}}, socket}
-  end 
   # It is also common to receive messages from the client and
   # broadcast to everyone in the current topic (games:lobby).
 

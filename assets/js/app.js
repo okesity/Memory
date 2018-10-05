@@ -24,7 +24,7 @@ function start(){
   let root = document.getElementById('root');
   if (root){
     console.log("starting game...");
-    let channel = socket.channel("room:" + window.gameName, {});
+    let channel = socket.channel("games:" + window.gameName, {});
     console.log("connect to channel: ", window.gameName);
     game_init(root, channel);
 
