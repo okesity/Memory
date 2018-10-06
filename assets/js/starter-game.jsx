@@ -35,8 +35,10 @@ class Starter extends React.Component {
     }
     this.setState(view.game);
   }
+
+
   checkCard(id){
-    /*console.log("check card", id);
+   /* console.log("check card", id);
     this.channel.push("click", {id: id})
 	        .receive("ok", this.gotView.bind(this))
     */
@@ -49,42 +51,38 @@ class Starter extends React.Component {
 
     let Tile=this.state.array;
     Tile[id].isHidden=false;
-    let num=this.state.numClick+1;
-    this.setState({array:Tile, numClick:num, lock:true}); //start checking
+
+    this.setState({array:Tile, lock:true}); //start checking
 
     if(this.state.firstValue!=null){ //has first card
 
       if(this.state.firstValue == value){   //first and second card have same value
         console.log('find same card!');
         //action
-        let num=this.state.numMatch+2;  //add count, stay isHidden=false
-        this.setState({numMatch: num});
-
-        if(this.state.firstValue){  //prevent access null when reset
-          Tile[id].isHidden=false;
-          Tile[id].hasMatched=true;
-          Tile[this.state.firstID].isHidden=false;
-          Tile[this.state.firstID].hasMatched=true;
-          this.setState({array: Tile,firstValue:null, lock:false})
-        }
+	this.channel.push("match",{firstid: id, secondid: this.state.firstID})
+	            .receive("ok", this.gotView.bind(this));
+	this.setState({lock:false});
       }
+      
       else{                       //not same, hide all cards after 1s
         //Tile[id].isHidden=true;
         //Tile[this.state.firstID].isHidden=true;
-        setTimeout(() => {
-          if(this.state.firstValue){
-            Tile[id].isHidden=true;
-            Tile[this.state.firstID].isHidden=true;
-            this.setState({array: Tile, firstValue:null, lock:false})
-          }
-        }, 1000);
+	    setTimeout(()=>{
+	    this.channel.push("clearfirst", {id1: id, id2: this.state.firstID})
+		        .receive("ok", this.gotView.bind(this));
+            this.setState({lock:false});
+	    }, 1000);
       }
     }
 
 
     else{                      //no first card
+
       console.log("add first value");
-      this.setState({firstValue:value, firstID:id, lock:false});
+      this.channel.push("first", {id: id, value: value})
+	          .receive("ok", this.gotView.bind(this));
+      
+      this.setState({ lock:false});
     }
     
   }

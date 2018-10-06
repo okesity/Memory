@@ -36,6 +36,34 @@ defmodule MemoryWeb.GamesChannel do
 
   end
 
+  def handle_in("match", %{"firstid" => id1, "secondid" => id2},  socket) do
+    name = socket.assigns[:name]
+    game = Game.match(socket.assigns[:game], id1, id2)
+    socket = assign(socket, :game, game)
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+
+  end
+
+  def handle_in("clearfirst", %{"id1" => id1, "id2" => id2},  socket) do
+    name = socket.assigns[:name]
+    game = Game.clearfirst(socket.assigns[:game], id1, id2)
+    socket = assign(socket, :game, game)
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+
+  end
+
+  def handle_in("first", %{"id" => id, "value" => value},  socket) do
+    name = socket.assigns[:name]
+    game = Game.addfirst(socket.assigns[:game], id, value)
+    socket = assign(socket, :game, game)
+    BackupAgent.put(name, game)
+    {:reply, {:ok, %{"game" => Game.client_view(game)}}, socket}
+
+  end
+
+
   def handle_in("click", %{"id" => id}, socket) do
     name = socket.assigns[:name]
     game = Game.click(socket.assigns[:game], id)
